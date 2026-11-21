@@ -1,7 +1,7 @@
 """
 Topics module: Contains exhaustive learning data for the 10 core subjects
 covering Azure exams (AZ-500, SC-200, SC-300, AI-102, AZ-305, SC-100),
-MSDN documentation, verified high-impact YouTube video embeds, labs,
+MSDN documentation, verified & playable YouTube video embeds, labs,
 and FDE advisory perspectives.
 """
 
@@ -99,9 +99,9 @@ TOPICS = [
                 "desc": "SOAR workflow orchestration using Azure Logic Apps, automated alert enrichment, and containment triggers."
             }
         ],
-        "youtube_embed": "https://www.youtube-nocookie.com/embed/1bXyL94fJ84",
-        "youtube_title": "Microsoft Sentinel Deep Dive & Threat Detection Architecture - John Savill",
-        "youtube_url": "https://www.youtube.com/watch?v=1bXyL94fJ84",
+        "youtube_embed": "https://www.youtube-nocookie.com/embed/Pl8n6GaWEo0",
+        "youtube_title": "Kusto Query Language (KQL) & Microsoft Sentinel Deep Dive - John Savill",
+        "youtube_url": "https://www.youtube.com/watch?v=Pl8n6GaWEo0",
         "core_concepts": [
             "Log Analytics Workspace design: multi-workspace vs single centralized workspace & commitments",
             "Data Connectors: Microsoft Entra ID, Defender XDR, Windows Security Events, Syslog/CEF, CloudTrail",
@@ -162,9 +162,9 @@ TOPICS = [
                 "desc": "Vulnerability scanning for ACR, AKS runtime protection, and malware scanning for Blob storage."
             }
         ],
-        "youtube_embed": "https://www.youtube-nocookie.com/embed/7Ue_N6zZ6f0",
-        "youtube_title": "Microsoft Defender for Cloud Masterclass & Workload Protection",
-        "youtube_url": "https://www.youtube.com/watch?v=7Ue_N6zZ6f0",
+        "youtube_embed": "https://www.youtube-nocookie.com/embed/2Qu5gQjNQh4",
+        "youtube_title": "Microsoft Defender for Cloud, CSPM & CWPP Architecture - John Savill",
+        "youtube_url": "https://www.youtube.com/watch?v=2Qu5gQjNQh4",
         "core_concepts": [
             "CSPM vs CWPP distinction: proactive configuration auditing vs active runtime threat detection",
             "Secure Score calculation: prioritized security controls and remediation impact",
@@ -289,7 +289,7 @@ TOPICS = [
             }
         ],
         "youtube_embed": "https://www.youtube-nocookie.com/embed/0k5G6M0x5J8",
-        "youtube_title": "Azure Virtual Network & Security Master Class - John Savill",
+        "youtube_title": "Azure Virtual Network & Network Security Master Class - John Savill",
         "youtube_url": "https://www.youtube.com/watch?v=0k5G6M0x5J8",
         "core_concepts": [
             "Hub-Spoke VNet Topology with VNet Peering and User Defined Routes (UDR 0.0.0.0/0 to Firewall)",
@@ -352,7 +352,7 @@ TOPICS = [
             }
         ],
         "youtube_embed": "https://www.youtube-nocookie.com/embed/2Qu5gQjNQh4",
-        "youtube_title": "SC-100 Cybersecurity Architect Expert & Cloud IR Study Cram - John Savill",
+        "youtube_title": "Cloud Incident Response, Forensics & Cyber Architecture (SC-100) - John Savill",
         "youtube_url": "https://www.youtube.com/watch?v=2Qu5gQjNQh4",
         "core_concepts": [
             "The 4-stage IR Lifecycle: Preparation, Detection & Analysis, Containment & Eradication, Recovery & Post-Incident Review (PIR)",
@@ -414,9 +414,9 @@ TOPICS = [
                 "desc": "Automated image scanning upon push and continuous runtime scanning for vulnerable packages in containers."
             }
         ],
-        "youtube_embed": "https://www.youtube-nocookie.com/embed/qIt3ayjl2HI",
-        "youtube_title": "Enterprise Vulnerability Remediation, Container Security & DevSecOps",
-        "youtube_url": "https://www.youtube.com/watch?v=qIt3ayjl2HI",
+        "youtube_embed": "https://www.youtube-nocookie.com/embed/6vISzj-z8k4",
+        "youtube_title": "Enterprise Vulnerability Management, MDVM & Security Operations - John Savill",
+        "youtube_url": "https://www.youtube.com/watch?v=6vISzj-z8k4",
         "core_concepts": [
             "Vulnerability Lifecycle: Discovery, Prioritization, Remediation, Verification, Reporting",
             "CVSS v3.1 / v4.0 metrics: Exploitability vs Impact metrics, EPSS (Exploit Prediction Scoring System)",
@@ -478,7 +478,7 @@ TOPICS = [
             }
         ],
         "youtube_embed": "https://www.youtube-nocookie.com/embed/vLlIBT0HSSc",
-        "youtube_title": "AI Security, Prompt Injection & Defensive LLM Architecture",
+        "youtube_title": "AI Security, Prompt Injection & Defensive LLM Architecture - Tech With Tim",
         "youtube_url": "https://www.youtube.com/watch?v=vLlIBT0HSSc",
         "core_concepts": [
             "OWASP LLM Top 10: LLM01 Prompt Injection (Direct jailbreaks vs Indirect injection via untrusted data)",
@@ -541,7 +541,7 @@ TOPICS = [
             }
         ],
         "youtube_embed": "https://www.youtube-nocookie.com/embed/2maPaQutcWs",
-        "youtube_title": "Complete Generative AI with Azure OpenAI Services Crash Course",
+        "youtube_title": "Complete Generative AI with Azure OpenAI Services Crash Course - Krish Naik",
         "youtube_url": "https://www.youtube.com/watch?v=2maPaQutcWs",
         "core_concepts": [
             "RAG (Retrieval-Augmented Generation) pipeline: Ingestion, Chunking strategies (fixed, semantic, markdown), Vectorization",
@@ -603,9 +603,9 @@ TOPICS = [
                 "desc": "Publish-Subscribe, Asynchronous Request-Reply, Claim Check, and Saga distributed patterns."
             }
         ],
-        "youtube_embed": "https://www.youtube-nocookie.com/embed/vLlIBT0HSSc",
-        "youtube_title": "How to Become a Forward Deployed Engineer in 2026 - Tech With Tim",
-        "youtube_url": "https://www.youtube.com/watch?v=vLlIBT0HSSc",
+        "youtube_embed": "https://www.youtube-nocookie.com/embed/NFiDNzQTzXY",
+        "youtube_title": "Forward Deployed Engineer Full Course for Beginners - Saurav Verma",
+        "youtube_url": "https://www.youtube.com/watch?v=NFiDNzQTzXY",
         "core_concepts": [
             "The FDE Philosophy: Working at the nexus of Customer Problem, Architecture, Product, and Live Implementation",
             "Root Cause Discovery: Moving past 'what the client asked for' to uncover 'the underlying operational bottleneck'",

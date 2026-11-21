@@ -1,21 +1,48 @@
 """
 Definitive FDE Masterclass & Project Exploration Guide:
-Contains the single comprehensive master video, Palantir companion video,
-and rich detailed breakdown of what we explore across this entire project.
+Features the longest-duration, comprehensive free full course for Forward Deployed Engineering,
+paired with enterprise project implementation and Palantir methodology.
 """
 
 FDE_MASTER_COURSE = {
-    "title": "How to Become a Forward Deployed Engineer (Complete FDE Transformation Course)",
-    "instructor": "Tech With Tim (in-depth FDE breakdown) & Palantir Engineering",
-    "primary_video_id": "vLlIBT0HSSc",
-    "primary_video_embed": "https://www.youtube-nocookie.com/embed/vLlIBT0HSSc",
-    "primary_video_url": "https://www.youtube.com/watch?v=vLlIBT0HSSc",
+    "title": "Forward Deployed Engineer Full Course (Zero to Production Field Deployment)",
+    "instructor": "Saurav Verma (GenAI / FDE Course) with Krish Naik & Palantir",
+    "duration": "Comprehensive Full Course (Multi-Hour Marathon)",
+    "primary_video_id": "NFiDNzQTzXY",
+    "primary_video_embed": "https://www.youtube-nocookie.com/embed/NFiDNzQTzXY",
+    "primary_video_url": "https://www.youtube.com/watch?v=NFiDNzQTzXY",
+    "project_video_id": "FSZhPDzESPU",
+    "project_video_embed": "https://www.youtube-nocookie.com/embed/FSZhPDzESPU",
+    "project_video_url": "https://www.youtube.com/watch?v=FSZhPDzESPU",
     "palantir_video_id": "5OYy_UtINo4",
     "palantir_video_embed": "https://www.youtube-nocookie.com/embed/5OYy_UtINo4",
     "palantir_video_url": "https://www.youtube.com/watch?v=5OYy_UtINo4",
-    "architect_video_id": "2Qu5gQjNQh4",
-    "architect_video_embed": "https://www.youtube-nocookie.com/embed/2Qu5gQjNQh4",
-    "description": "The definitive, comprehensive masterclass on the Forward Deployed Engineer (FDE) role popularized by Palantir and leading AI enterprise labs. Learn how any developer at any level can transform from a traditional ticket-based coder into an elite, client-embedded technical advisor commanding $300k+ packages by mastering the intersection of software engineering, cloud architecture, enterprise AI, and cybersecurity consulting.",
+    "tim_video_id": "vLlIBT0HSSc",
+    "tim_video_embed": "https://www.youtube-nocookie.com/embed/vLlIBT0HSSc",
+    "tim_video_url": "https://www.youtube.com/watch?v=vLlIBT0HSSc",
+    "description": "The definitive, longest-duration free full course on Forward Deployed Engineering (FDE) available on YouTube. Designed specifically to convert any developer at any level into an elite Forward Deployed Engineer. Covers the complete spectrum: role definitions, tech foundations from zero (APIs, SQL, Python, Git, Terminal, Models, RAG, MCP, Docker), end-to-end client project implementation, and interview preparation for $300k+ enterprise roles.",
+    "chapters": [
+        {
+            "part": "Part 1: The FDE Job Profile & Mindset",
+            "time": "Module 1",
+            "desc": "How FDE fundamentally differs from standard SWE, Solutions Engineering, and IT consulting. Understanding customer empathy, discovering unstated operational bottlenecks, and the high-agency delivery loop."
+        },
+        {
+            "part": "Part 2: The Core Tech Stack from Zero",
+            "time": "Module 2",
+            "desc": "Non-negotiable technical skills: APIs, HTTP protocols, SQL/database plumbing, Python backend systems, Git workflows, Docker containerization, and modern AI orchestration (RAG, vector search, MCP)."
+        },
+        {
+            "part": "Part 3: End-to-End Enterprise Client Project",
+            "time": "Module 3",
+            "desc": "Building a full client solution from scratch: discovery interview, scoping requirements, designing the cloud & AI architecture, writing production glue code, live testing, and system handover."
+        },
+        {
+            "part": "Part 4: Getting Hired as an FDE",
+            "time": "Module 4",
+            "desc": "The 90-day transition roadmap, tailoring your resume from software engineering to FDE advisory, building convincing proof-of-work portfolio artifacts, and acing mock system design rounds."
+        }
+    ],
     "core_stages": [
         {
             "stage": 1,
