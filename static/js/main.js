@@ -1,6 +1,11 @@
 /**
  * Main Interactive JS for FDE Learning Portal
+ * Enhanced with LocalStorage sync for instantaneous, rock-solid persistence on Vercel Serverless.
  */
+
+// LocalStorage keys
+const STORAGE_DAYS_KEY = "fde_learning_days";
+const STORAGE_TOPICS_KEY = "fde_learning_topics";
 
 // Toast notification helper
 function showToast(message, type = "success") {
@@ -20,13 +25,11 @@ function showToast(message, type = "success") {
 
     container.appendChild(toast);
 
-    // Trigger enter animation
     setTimeout(() => {
         toast.classList.remove("opacity-0", "translate-y-2");
         toast.classList.add("opacity-100", "translate-y-0");
     }, 10);
 
-    // Auto dismiss
     setTimeout(() => {
         toast.classList.add("opacity-0", "translate-y-2");
         setTimeout(() => toast.remove(), 300);
@@ -54,10 +57,37 @@ function copyToClipboard(text, buttonElement) {
     });
 }
 
+// Helper: Get local storage state
+function getLocalDays() {
+    try {
+        return JSON.parse(localStorage.getItem(STORAGE_DAYS_KEY)) || {};
+    } catch {
+        return {};
+    }
+}
+
+function getLocalTopics() {
+    try {
+        return JSON.parse(localStorage.getItem(STORAGE_TOPICS_KEY)) || {};
+    } catch {
+        return {};
+    }
+}
+
 // Toggle day completion status
 async function toggleDayProgress(dayNum, event) {
     if (event) event.stopPropagation();
 
+    // 1. Immediately update LocalStorage for instant UI feedback
+    const daysState = getLocalDays();
+    const newStatus = !daysState[dayNum];
+    daysState[dayNum] = newStatus;
+    localStorage.setItem(STORAGE_DAYS_KEY, JSON.stringify(daysState));
+
+    // Update DOM UI elements immediately
+    updateDayDOM(dayNum, newStatus);
+
+    // 2. Sync to Backend
     try {
         const response = await fetch("/api/progress/toggle_day", {
             method: "POST",
@@ -67,40 +97,45 @@ async function toggleDayProgress(dayNum, event) {
 
         const data = await response.json();
         if (data.success) {
-            // Update UI elements across the page
-            const checkIcon = document.getElementById(`day-check-${dayNum}`);
-            const dayCard = document.getElementById(`day-card-${dayNum}`);
-            
-            if (checkIcon) {
-                if (data.completed) {
-                    checkIcon.classList.remove("opacity-0");
-                    checkIcon.classList.add("opacity-100");
-                } else {
-                    checkIcon.classList.remove("opacity-100");
-                    checkIcon.classList.add("opacity-0");
-                }
-            }
-
-            if (dayCard) {
-                if (data.completed) {
-                    dayCard.classList.add("border-emerald-500/40", "bg-emerald-950/10");
-                } else {
-                    dayCard.classList.remove("border-emerald-500/40", "bg-emerald-950/10");
-                }
-            }
-
-            // Update global metrics header
             updateGlobalMetrics(data.metrics);
-            showToast(`Day ${dayNum} marked as ${data.completed ? 'completed' : 'in progress'}!`);
+            showToast(`Day ${dayNum} marked as ${newStatus ? 'completed' : 'in progress'}!`);
         }
     } catch (err) {
-        console.error("Error toggling day", err);
-        showToast("Failed to update status", "error");
+        console.warn("Backend sync failed, saved to LocalStorage:", err);
+        showToast(`Day ${dayNum} saved locally!`);
+    }
+}
+
+function updateDayDOM(dayNum, completed) {
+    const checkIcon = document.getElementById(`day-check-${dayNum}`);
+    const dayCard = document.getElementById(`day-card-${dayNum}`);
+    
+    if (checkIcon) {
+        if (completed) {
+            checkIcon.classList.remove("opacity-0");
+            checkIcon.classList.add("opacity-100");
+        } else {
+            checkIcon.classList.remove("opacity-100");
+            checkIcon.classList.add("opacity-0");
+        }
+    }
+
+    if (dayCard) {
+        if (completed) {
+            dayCard.classList.add("border-emerald-500/40", "bg-emerald-950/10");
+        } else {
+            dayCard.classList.remove("border-emerald-500/40", "bg-emerald-950/10");
+        }
     }
 }
 
 // Update topic status
 async function updateTopicStatus(topicId, status) {
+    // Save to LocalStorage
+    const topicsState = getLocalTopics();
+    topicsState[topicId] = status;
+    localStorage.setItem(STORAGE_TOPICS_KEY, JSON.stringify(topicsState));
+
     try {
         const response = await fetch("/api/progress/set_topic_status", {
             method: "POST",
@@ -113,8 +148,8 @@ async function updateTopicStatus(topicId, status) {
             showToast(`Topic ${topicId} marked as ${status.replace('_', ' ')}!`);
         }
     } catch (err) {
-        console.error("Error updating topic status", err);
-        showToast("Failed to update topic status", "error");
+        console.warn("Backend sync failed, saved to LocalStorage:", err);
+        showToast(`Topic status saved locally!`);
     }
 }
 
@@ -125,6 +160,7 @@ async function saveDayNotes(dayNum) {
 
     const notes = textarea.value;
     try {
+        localStorage.setItem(`fde_day_note_${dayNum}`, notes);
         const response = await fetch("/api/progress/save_day_notes", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -135,8 +171,7 @@ async function saveDayNotes(dayNum) {
             showToast(`Notes for Day ${dayNum} saved!`);
         }
     } catch (err) {
-        console.error("Error saving notes", err);
-        showToast("Failed to save notes", "error");
+        showToast(`Notes saved locally!`);
     }
 }
 
@@ -144,7 +179,6 @@ async function saveDayNotes(dayNum) {
 function updateGlobalMetrics(metrics) {
     if (!metrics) return;
 
-    // Days progress bar and text
     const daysBar = document.getElementById("header-days-bar");
     const daysPercentText = document.getElementById("header-days-percent");
     const daysCountText = document.getElementById("header-days-count");
@@ -153,7 +187,6 @@ function updateGlobalMetrics(metrics) {
     if (daysPercentText) daysPercentText.innerText = `${metrics.days_percent}%`;
     if (daysCountText) daysCountText.innerText = `${metrics.completed_days}/${metrics.total_days} Days`;
 
-    // Topics progress
     const topicsBar = document.getElementById("header-topics-bar");
     const topicsCountText = document.getElementById("header-topics-count");
     if (topicsBar) topicsBar.style.width = `${metrics.topics_percent}%`;
@@ -182,14 +215,12 @@ async function runKqlSimulation(queryId) {
         if (data.success) {
             statusText.innerHTML = `<span class="text-emerald-400 font-semibold">✓ Query executed successfully!</span> Found <strong>${data.count}</strong> correlated event(s) in <code>${data.table}</code>.`;
 
-            // Build dynamic table headers
             let headerHtml = "<tr>";
             data.columns.forEach(col => {
                 headerHtml += `<th class="px-4 py-2 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider bg-gray-900 border-b border-gray-800">${col}</th>`;
             });
             headerHtml += "</tr>";
 
-            // Build dynamic table rows
             let rowsHtml = "";
             data.rows.forEach((row, idx) => {
                 const bg = idx % 2 === 0 ? "bg-gray-800/40" : "bg-gray-900/40";
@@ -217,3 +248,27 @@ async function runKqlSimulation(queryId) {
         showToast("Error running query", "error");
     }
 }
+
+// Background startup sync on page load
+document.addEventListener("DOMContentLoaded", () => {
+    const localDays = getLocalDays();
+    const localTopics = getLocalTopics();
+
+    // If local state has any checkmarks, sync to server in background
+    if (Object.keys(localDays).length > 0 || Object.keys(localTopics).length > 0) {
+        fetch("/api/progress/sync", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ days: localDays, topics: localTopics })
+        }).then(r => r.json()).then(data => {
+            if (data.metrics) {
+                updateGlobalMetrics(data.metrics);
+            }
+        }).catch(() => {});
+        
+        // Also reflect in DOM
+        Object.entries(localDays).forEach(([day, completed]) => {
+            updateDayDOM(day, completed);
+        });
+    }
+});

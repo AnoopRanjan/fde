@@ -6,6 +6,7 @@ A full-stack, local Python web application built to transform a **Cloud Technica
 
 ## ⚡ How to Run (No Batch File Needed!)
 
+### Option A: Run Locally
 Run directly with standard Python from this directory:
 
 ```bash
@@ -16,6 +17,36 @@ Then open your browser at:
 👉 **[http://localhost:5000](http://localhost:5000)**
 
 *(No batch file, no Docker, and no Node.js/npm required! Everything runs on standard Python 3 with Flask and SQLite).*
+
+---
+
+### Option B: Deploy Instantly to Vercel (Zero-Config Serverless)
+
+This repository is pre-configured for instant deployment on **Vercel** with `@vercel/python`:
+
+#### Method 1: Using the Vercel Dashboard (GitHub / GitLab / Bitbucket)
+1. Push this project folder to your GitHub repository:
+   ```bash
+   git init
+   git add .
+   git commit -m "Initial commit of FDE learning portal"
+   git branch -M main
+   git remote add origin <your-github-repo-url>
+   git push -u origin main
+   ```
+2. Log into [vercel.com](https://vercel.com) and click **"Add New Project"**.
+3. Import your GitHub repository.
+4. Leave all build settings as default (Framework Preset: **Other**, Root Directory: `./`).
+5. Click **"Deploy"**. Vercel will install dependencies from `requirements.txt` and launch your live URL in under 60 seconds!
+
+#### Method 2: Using the Vercel CLI
+From this directory, simply run:
+```bash
+vercel
+```
+(Follow the prompts: accept defaults, and Vercel will build and deploy instantly).
+
+> **Note on Vercel Architecture**: Serverless environments have a read-only root filesystem. The application automatically detects Vercel (`VERCEL=1`), directs SQLite database operations to the writable `/tmp` directory, and syncs user progress via browser `localStorage` so checkmarks and notes persist seamlessly across serverless container recycles.
 
 ---
 

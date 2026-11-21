@@ -1,10 +1,12 @@
 """
 Flask Web Application: FDE + AI + Cybersecurity Advisor Learning & Transformation Portal
-Run directly with: python app.py
+Compatible with local execution (`python app.py`) and instant Vercel Serverless deployment.
 """
 
 import os
+import shutil
 import sqlite3
+import tempfile
 from datetime import datetime
 from flask import Flask, render_template, request, jsonify, redirect, url_for
 
@@ -14,9 +16,24 @@ from data.projects import PROJECTS, get_project_by_id
 from data.kql_queries import KQL_QUERIES, MOCK_LOGS, get_kql_by_id
 from data.interview_prep import POSITIONING_STRATEGY, ELEVATOR_PITCH, INTERVIEW_QUESTIONS, get_questions_by_category
 
-app = Flask(__name__)
+# Base paths configuration for absolute directory resolution (essential for Vercel serverless)
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+app = Flask(
+    __name__,
+    template_folder=os.path.join(BASE_DIR, "templates"),
+    static_folder=os.path.join(BASE_DIR, "static")
+)
 app.secret_key = "fde-cyber-ai-advisor-portal-key-2026"
-DB_PATH = os.path.join(os.path.dirname(__file__), "learning_portal.db")
+
+# Vercel environment detection: filesystem is read-only except tempdir (/tmp on Linux/Vercel)
+IS_VERCEL = bool(os.environ.get("VERCEL"))
+if IS_VERCEL:
+    DB_DIR = tempfile.gettempdir()
+else:
+    DB_DIR = BASE_DIR
+
+DB_PATH = os.path.join(DB_DIR, "learning_portal.db")
 
 
 def get_db():
@@ -26,6 +43,18 @@ def get_db():
 
 
 def init_db():
+    """Initializes tables and seeds data. Safe to call repeatedly."""
+    os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
+    
+    # If running on Vercel and DB doesn't exist in /tmp, copy bundled DB if present
+    if IS_VERCEL and not os.path.exists(DB_PATH):
+        bundled = os.path.join(BASE_DIR, "learning_portal.db")
+        if os.path.exists(bundled):
+            try:
+                shutil.copyfile(bundled, DB_PATH)
+            except Exception:
+                pass
+
     conn = get_db()
     cursor = conn.cursor()
     
@@ -64,60 +93,61 @@ def init_db():
     cursor.execute("SELECT COUNT(*) as count FROM day_progress")
     if cursor.fetchone()["count"] == 0:
         for day in range(1, 36):
-            cursor.execute("INSERT INTO day_progress (day, completed, notes) VALUES (?, 0, '')", (day,))
+            cursor.execute("INSERT OR IGNORE INTO day_progress (day, completed, notes) VALUES (?, 0, '')", (day,))
             
     # Seed topic_progress if empty
     cursor.execute("SELECT COUNT(*) as count FROM topic_progress")
     if cursor.fetchone()["count"] == 0:
         for topic in TOPICS:
-            cursor.execute("INSERT INTO topic_progress (topic_id, status, notes) VALUES (?, 'not_started', '')", (topic["id"],))
+            cursor.execute("INSERT OR IGNORE INTO topic_progress (topic_id, status, notes) VALUES (?, 'not_started', '')", (topic["id"],))
             
     conn.commit()
     conn.close()
 
 
+# Ensure database is initialized upon module load (critical for Vercel WSGI worker initialization)
+try:
+    init_db()
+except Exception as e:
+    print(f"Initial DB bootstrap notice: {e}")
+
+
 def calculate_metrics():
-    conn = get_db()
-    cursor = conn.cursor()
-    
-    # Days completed
-    cursor.execute("SELECT COUNT(*) as total, SUM(completed) as completed FROM day_progress")
-    row = cursor.fetchone()
-    total_days = row["total"] or 35
-    completed_days = row["completed"] or 0
-    days_percent = int((completed_days / total_days) * 100) if total_days else 0
-    
-    # Topics completed
-    cursor.execute("SELECT COUNT(*) as total, SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as completed FROM topic_progress")
-    t_row = cursor.fetchone()
-    total_topics = t_row["total"] or 10
-    completed_topics = t_row["completed"] or 0
-    topics_percent = int((completed_topics / total_topics) * 100) if total_topics else 0
-    
-    # Find next active day
-    cursor.execute("SELECT day FROM day_progress WHERE completed = 0 ORDER BY day ASC LIMIT 1")
-    next_day_row = cursor.fetchone()
-    current_day = next_day_row["day"] if next_day_row else 35
-    
-    conn.close()
-    return {
-        "total_days": total_days,
-        "completed_days": completed_days,
-        "days_percent": days_percent,
-        "total_topics": total_topics,
-        "completed_topics": completed_topics,
-        "topics_percent": topics_percent,
-        "current_day": current_day
-    }
-
-
-# Context processor to make metrics available to all templates
-@app.context_processor
-def inject_global_metrics():
     try:
-        metrics = calculate_metrics()
+        conn = get_db()
+        cursor = conn.cursor()
+        
+        # Days completed
+        cursor.execute("SELECT COUNT(*) as total, SUM(completed) as completed FROM day_progress")
+        row = cursor.fetchone()
+        total_days = row["total"] or 35
+        completed_days = row["completed"] or 0
+        days_percent = int((completed_days / total_days) * 100) if total_days else 0
+        
+        # Topics completed
+        cursor.execute("SELECT COUNT(*) as total, SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as completed FROM topic_progress")
+        t_row = cursor.fetchone()
+        total_topics = t_row["total"] or 10
+        completed_topics = t_row["completed"] or 0
+        topics_percent = int((completed_topics / total_topics) * 100) if total_topics else 0
+        
+        # Find next active day
+        cursor.execute("SELECT day FROM day_progress WHERE completed = 0 ORDER BY day ASC LIMIT 1")
+        next_day_row = cursor.fetchone()
+        current_day = next_day_row["day"] if next_day_row else 35
+        
+        conn.close()
+        return {
+            "total_days": total_days,
+            "completed_days": completed_days,
+            "days_percent": days_percent,
+            "total_topics": total_topics,
+            "completed_topics": completed_topics,
+            "topics_percent": topics_percent,
+            "current_day": current_day
+        }
     except Exception:
-        metrics = {
+        return {
             "total_days": 35,
             "completed_days": 0,
             "days_percent": 0,
@@ -126,25 +156,44 @@ def inject_global_metrics():
             "topics_percent": 0,
             "current_day": 1
         }
-    return dict(metrics=metrics)
+
+
+# Context processor to make metrics available to all templates
+@app.context_processor
+def inject_global_metrics():
+    return dict(metrics=calculate_metrics(), is_vercel=IS_VERCEL)
+
+
+# Ensure DB exists before handling request
+@app.before_request
+def ensure_db_ready():
+    if not os.path.exists(DB_PATH):
+        try:
+            init_db()
+        except Exception:
+            pass
 
 
 # ================= ROUTES =================
 
 @app.route("/")
 def index():
-    conn = get_db()
-    cursor = conn.cursor()
-    
-    # Fetch all day progress
-    cursor.execute("SELECT day, completed FROM day_progress")
-    progress_map = {row["day"]: row["completed"] for row in cursor.fetchall()}
-    
-    # Fetch all topic progress
-    cursor.execute("SELECT topic_id, status FROM topic_progress")
-    topic_status_map = {row["topic_id"]: row["status"] for row in cursor.fetchall()}
-    
-    conn.close()
+    try:
+        conn = get_db()
+        cursor = conn.cursor()
+        
+        # Fetch all day progress
+        cursor.execute("SELECT day, completed FROM day_progress")
+        progress_map = {row["day"]: row["completed"] for row in cursor.fetchall()}
+        
+        # Fetch all topic progress
+        cursor.execute("SELECT topic_id, status FROM topic_progress")
+        topic_status_map = {row["topic_id"]: row["status"] for row in cursor.fetchall()}
+        
+        conn.close()
+    except Exception:
+        progress_map = {d: 0 for d in range(1, 36)}
+        topic_status_map = {t["id"]: "not_started" for t in TOPICS}
     
     metrics = calculate_metrics()
     current_day_data = get_day_by_number(metrics["current_day"])
@@ -166,11 +215,14 @@ def index():
 def roadmap():
     selected_phase = request.args.get("phase", default=0, type=int)
     
-    conn = get_db()
-    cursor = conn.cursor()
-    cursor.execute("SELECT day, completed, notes FROM day_progress")
-    progress_data = {row["day"]: {"completed": row["completed"], "notes": row["notes"]} for row in cursor.fetchall()}
-    conn.close()
+    try:
+        conn = get_db()
+        cursor = conn.cursor()
+        cursor.execute("SELECT day, completed, notes FROM day_progress")
+        progress_data = {row["day"]: {"completed": row["completed"], "notes": row["notes"]} for row in cursor.fetchall()}
+        conn.close()
+    except Exception:
+        progress_data = {d: {"completed": 0, "notes": ""} for d in range(1, 36)}
     
     if selected_phase in [1, 2, 3, 4, 5]:
         filtered_days = get_days_by_phase(selected_phase)
@@ -203,12 +255,15 @@ def day_detail(day_num):
         
     topic = get_topic_by_id(day_data["topic_id"])
     
-    conn = get_db()
-    cursor = conn.cursor()
-    cursor.execute("SELECT completed, notes FROM day_progress WHERE day = ?", (day_num,))
-    row = cursor.fetchone()
-    day_status = {"completed": row["completed"] if row else 0, "notes": row["notes"] if row else ""}
-    conn.close()
+    try:
+        conn = get_db()
+        cursor = conn.cursor()
+        cursor.execute("SELECT completed, notes FROM day_progress WHERE day = ?", (day_num,))
+        row = cursor.fetchone()
+        day_status = {"completed": row["completed"] if row else 0, "notes": row["notes"] if row else ""}
+        conn.close()
+    except Exception:
+        day_status = {"completed": 0, "notes": ""}
     
     prev_day = day_num - 1 if day_num > 1 else None
     next_day = day_num + 1 if day_num < 35 else None
@@ -225,11 +280,14 @@ def day_detail(day_num):
 
 @app.route("/topics")
 def topics_list():
-    conn = get_db()
-    cursor = conn.cursor()
-    cursor.execute("SELECT topic_id, status FROM topic_progress")
-    status_map = {row["topic_id"]: row["status"] for row in cursor.fetchall()}
-    conn.close()
+    try:
+        conn = get_db()
+        cursor = conn.cursor()
+        cursor.execute("SELECT topic_id, status FROM topic_progress")
+        status_map = {row["topic_id"]: row["status"] for row in cursor.fetchall()}
+        conn.close()
+    except Exception:
+        status_map = {t["id"]: "not_started" for t in TOPICS}
     
     return render_template(
         "topics_list.html",
@@ -244,16 +302,17 @@ def topic_detail(topic_id):
     if not topic:
         return redirect(url_for("topics_list"))
         
-    conn = get_db()
-    cursor = conn.cursor()
-    cursor.execute("SELECT status, notes FROM topic_progress WHERE topic_id = ?", (topic_id,))
-    row = cursor.fetchone()
-    topic_status = {"status": row["status"] if row else "not_started", "notes": row["notes"] if row else ""}
-    conn.close()
+    try:
+        conn = get_db()
+        cursor = conn.cursor()
+        cursor.execute("SELECT status, notes FROM topic_progress WHERE topic_id = ?", (topic_id,))
+        row = cursor.fetchone()
+        topic_status = {"status": row["status"] if row else "not_started", "notes": row["notes"] if row else ""}
+        conn.close()
+    except Exception:
+        topic_status = {"status": "not_started", "notes": ""}
     
-    # Days associated with this topic
     associated_days = [d for d in ROADMAP_DAYS if d["topic_id"] == topic_id]
-    
     prev_topic = get_topic_by_id(topic_id - 1) if topic_id > 1 else None
     next_topic = get_topic_by_id(topic_id + 1) if topic_id < 10 else None
     
@@ -318,10 +377,14 @@ def notes_view():
         if content:
             cursor.execute("INSERT INTO journal_notes (title, content, tag, created_at) VALUES (?, ?, ?, ?)", (title, content, tag, created_at))
             conn.commit()
+        conn.close()
         return redirect(url_for("notes_view"))
         
-    cursor.execute("SELECT id, title, content, tag, created_at FROM journal_notes ORDER BY id DESC")
-    notes = cursor.fetchall()
+    try:
+        cursor.execute("SELECT id, title, content, tag, created_at FROM journal_notes ORDER BY id DESC")
+        notes = cursor.fetchall()
+    except Exception:
+        notes = []
     conn.close()
     
     return render_template("notes.html", notes=notes)
@@ -400,6 +463,41 @@ def set_topic_status():
     return jsonify({"success": True, "topic_id": topic_id, "status": status, "metrics": metrics})
 
 
+@app.route("/api/progress/sync", methods=["POST"])
+def sync_client_storage():
+    """Syncs client-side localStorage state into server SQLite DB.
+    Crucial for Vercel Serverless to seamlessly preserve user progress across cold starts."""
+    data = request.get_json() or {}
+    days_data = data.get("days", {})
+    topics_data = data.get("topics", {})
+    
+    conn = get_db()
+    cursor = conn.cursor()
+    
+    # Sync days
+    for day_str, completed in days_data.items():
+        try:
+            day_num = int(day_str)
+            comp_int = 1 if completed else 0
+            cursor.execute("UPDATE day_progress SET completed = ? WHERE day = ?", (comp_int, day_num))
+        except Exception:
+            continue
+            
+    # Sync topics
+    for topic_str, status in topics_data.items():
+        try:
+            topic_id = int(topic_str)
+            cursor.execute("UPDATE topic_progress SET status = ? WHERE topic_id = ?", (status, topic_id))
+        except Exception:
+            continue
+            
+    conn.commit()
+    conn.close()
+    
+    metrics = calculate_metrics()
+    return jsonify({"success": True, "metrics": metrics})
+
+
 @app.route("/api/kql/simulate", methods=["POST"])
 def simulate_kql():
     data = request.get_json() or {}
@@ -412,10 +510,8 @@ def simulate_kql():
     table = kql["table"]
     logs = MOCK_LOGS.get(table, [])
     
-    # Simulate high-fidelity results based on query logic
     simulated_results = []
     if query_id == "kql-1":
-        # Returns brute force match
         simulated_results = [
             {
                 "SuccessTime": "2026-11-21T10:09:50Z",
@@ -428,7 +524,6 @@ def simulate_kql():
             }
         ]
     elif query_id == "kql-2":
-        # Returns role escalation
         simulated_results = [
             {
                 "TimeGenerated": "2026-11-21T09:12:00Z",
@@ -441,7 +536,6 @@ def simulate_kql():
             }
         ]
     elif query_id == "kql-3":
-        # Impossible travel
         simulated_results = [
             {
                 "TimeGenerated": "2026-11-21T12:15:00Z",
@@ -481,8 +575,7 @@ if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     print("\n" + "="*60)
     print(" 🚀 FDE + AI + Cybersecurity Advisor Portal is Starting!")
-    print(f" 🌐 Open your browser at: http://localhost:{port}")
-    print(" 📌 Features: 10 Core Topics, 35-Day Roadmap, MSDN Links,")
-    print("    YouTube Embeds, Interactive KQL Simulator, Portfolio Blueprints")
+    print(f" 🌐 Local URL: http://localhost:{port}")
+    print(" ☁️  Vercel Ready: Serverless entrypoint configured at api/index.py")
     print("="*60 + "\n")
     app.run(host="0.0.0.0", port=port, debug=True)
