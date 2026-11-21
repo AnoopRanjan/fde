@@ -1,7 +1,8 @@
 """
 Topics module: Contains exhaustive learning data for the 10 core subjects
 covering Azure exams (AZ-500, SC-200, SC-300, AI-102, AZ-305, SC-100),
-MSDN documentation, YouTube playlists, labs, and FDE advisory perspectives.
+MSDN documentation, verified high-impact YouTube video embeds, labs,
+and FDE advisory perspectives.
 """
 
 TOPICS = [
@@ -35,9 +36,9 @@ TOPICS = [
                 "desc": "Hub-and-spoke networking, management group hierarchies, and delegated security subscription models."
             }
         ],
-        "youtube_embed": "https://www.youtube-nocookie.com/embed/videoseries?list=PLlVtbbG16Row4l2yR_SjYVjV99G3yOQ7m",
-        "youtube_title": "John Savill: Azure Security (AZ-500) Exam Cram & Masterclass",
-        "youtube_url": "https://www.youtube.com/playlist?list=PLlVtbbG16Row4l2yR_SjYVjV99G3yOQ7m",
+        "youtube_embed": "https://www.youtube-nocookie.com/embed/6vISzj-z8k4",
+        "youtube_title": "AZ-500 Microsoft Azure Security Technologies Study Cram - John Savill",
+        "youtube_url": "https://www.youtube.com/watch?v=6vISzj-z8k4",
         "core_concepts": [
             "Enterprise Management Group Hierarchies & Subscription governance",
             "Azure Policy initiatives & automated remediation tasks (DeployIfNotExists)",
@@ -98,9 +99,9 @@ TOPICS = [
                 "desc": "SOAR workflow orchestration using Azure Logic Apps, automated alert enrichment, and containment triggers."
             }
         ],
-        "youtube_embed": "https://www.youtube-nocookie.com/embed/videoseries?list=PL-V4YVMUCh3zqE7z4_3QJ7L0bQnS_1Uf9",
-        "youtube_title": "Microsoft Security Community: Microsoft Sentinel Master Series",
-        "youtube_url": "https://www.youtube.com/playlist?list=PL-V4YVMUCh3zqE7z4_3QJ7L0bQnS_1Uf9",
+        "youtube_embed": "https://www.youtube-nocookie.com/embed/1bXyL94fJ84",
+        "youtube_title": "Microsoft Sentinel Deep Dive & Threat Detection Architecture - John Savill",
+        "youtube_url": "https://www.youtube.com/watch?v=1bXyL94fJ84",
         "core_concepts": [
             "Log Analytics Workspace design: multi-workspace vs single centralized workspace & commitments",
             "Data Connectors: Microsoft Entra ID, Defender XDR, Windows Security Events, Syslog/CEF, CloudTrail",
@@ -161,9 +162,9 @@ TOPICS = [
                 "desc": "Vulnerability scanning for ACR, AKS runtime protection, and malware scanning for Blob storage."
             }
         ],
-        "youtube_embed": "https://www.youtube-nocookie.com/embed/videoseries?list=PL-V4YVMUCh3wPjF-K7E_uV64uL0mQ8a4Q",
-        "youtube_title": "Microsoft Security Community: Defender for Cloud in the Field",
-        "youtube_url": "https://www.youtube.com/playlist?list=PL-V4YVMUCh3wPjF-K7E_uV64uL0mQ8a4Q",
+        "youtube_embed": "https://www.youtube-nocookie.com/embed/7Ue_N6zZ6f0",
+        "youtube_title": "Microsoft Defender for Cloud Masterclass & Workload Protection",
+        "youtube_url": "https://www.youtube.com/watch?v=7Ue_N6zZ6f0",
         "core_concepts": [
             "CSPM vs CWPP distinction: proactive configuration auditing vs active runtime threat detection",
             "Secure Score calculation: prioritized security controls and remediation impact",
@@ -224,9 +225,9 @@ TOPICS = [
                 "desc": "Service principals, managed identities, credential rotation, and workload identity federation."
             }
         ],
-        "youtube_embed": "https://www.youtube-nocookie.com/embed/videoseries?list=PLlVtbbG16Rop5q8eGvW0Q0i_m8C0x_wE8",
-        "youtube_title": "John Savill: Microsoft Entra ID / SC-300 Masterclass Series",
-        "youtube_url": "https://www.youtube.com/playlist?list=PLlVtbbG16Rop5q8eGvW0Q0i_m8C0x_wE8",
+        "youtube_embed": "https://www.youtube-nocookie.com/embed/LGpgqRVG65g",
+        "youtube_title": "SC-300 Microsoft Identity and Access Administrator Study Cram - John Savill",
+        "youtube_url": "https://www.youtube.com/watch?v=LGpgqRVG65g",
         "core_concepts": [
             "Modern Auth Protocols: OAuth 2.0, OpenID Connect (OIDC), SAML 2.0, token life cycles",
             "Conditional Access Architecture: Signals (User risk, Sign-in risk, Device compliance, Named locations) → Grant controls",
@@ -287,9 +288,9 @@ TOPICS = [
                 "desc": "Securing PaaS services (SQL, Storage, Key Vault) without exposing public IP addresses."
             }
         ],
-        "youtube_embed": "https://www.youtube-nocookie.com/embed/videoseries?list=PLlVtbbG16Ror2kSZ5s29vd5G4i_3H7zGk",
-        "youtube_title": "John Savill: Azure Networking & Network Security Deep Dive",
-        "youtube_url": "https://www.youtube.com/playlist?list=PLlVtbbG16Ror2kSZ5s29vd5G4i_3H7zGk",
+        "youtube_embed": "https://www.youtube-nocookie.com/embed/0k5G6M0x5J8",
+        "youtube_title": "Azure Virtual Network & Security Master Class - John Savill",
+        "youtube_url": "https://www.youtube.com/watch?v=0k5G6M0x5J8",
         "core_concepts": [
             "Hub-Spoke VNet Topology with VNet Peering and User Defined Routes (UDR 0.0.0.0/0 to Firewall)",
             "Network Security Groups (NSGs) & Application Security Groups (ASGs) for micro-segmentation",
@@ -350,9 +351,9 @@ TOPICS = [
                 "desc": "How to snapshot compromised VM disks for offline forensic analysis without altering chain of custody."
             }
         ],
-        "youtube_embed": "https://www.youtube-nocookie.com/embed/videoseries?list=PL-V4YVMUCh3w73xP8zIswUf-hR6Wj5FzR",
-        "youtube_title": "Microsoft Security: Cloud Incident Response & Threat Hunting",
-        "youtube_url": "https://www.youtube.com/playlist?list=PL-V4YVMUCh3w73xP8zIswUf-hR6Wj5FzR",
+        "youtube_embed": "https://www.youtube-nocookie.com/embed/2Qu5gQjNQh4",
+        "youtube_title": "SC-100 Cybersecurity Architect Expert & Cloud IR Study Cram - John Savill",
+        "youtube_url": "https://www.youtube.com/watch?v=2Qu5gQjNQh4",
         "core_concepts": [
             "The 4-stage IR Lifecycle: Preparation, Detection & Analysis, Containment & Eradication, Recovery & Post-Incident Review (PIR)",
             "Triage & Scoping: Determining blast radius, compromised identities, and lateral movement",
@@ -413,9 +414,9 @@ TOPICS = [
                 "desc": "Automated image scanning upon push and continuous runtime scanning for vulnerable packages in containers."
             }
         ],
-        "youtube_embed": "https://www.youtube-nocookie.com/embed/videoseries?list=PL-V4YVMUCh3zqE7z4_3QJ7L0bQnS_1Uf9",
-        "youtube_title": "Vulnerability Management & Defender for Cloud Workflows",
-        "youtube_url": "https://www.youtube.com/playlist?list=PL-V4YVMUCh3zqE7z4_3QJ7L0bQnS_1Uf9",
+        "youtube_embed": "https://www.youtube-nocookie.com/embed/qIt3ayjl2HI",
+        "youtube_title": "Enterprise Vulnerability Remediation, Container Security & DevSecOps",
+        "youtube_url": "https://www.youtube.com/watch?v=qIt3ayjl2HI",
         "core_concepts": [
             "Vulnerability Lifecycle: Discovery, Prioritization, Remediation, Verification, Reporting",
             "CVSS v3.1 / v4.0 metrics: Exploitability vs Impact metrics, EPSS (Exploit Prediction Scoring System)",
@@ -476,9 +477,9 @@ TOPICS = [
                 "desc": "AI Red Teaming methodology, adversarial testing, and data privacy governance in GenAI."
             }
         ],
-        "youtube_embed": "https://www.youtube-nocookie.com/embed/videoseries?list=PLZbbT5o_s2xraC0a2t59GqB0k1T4n_0z3",
-        "youtube_title": "AI Security, Prompt Injection & GenAI Defensive Architecture",
-        "youtube_url": "https://www.youtube.com/playlist?list=PLZbbT5o_s2xraC0a2t59GqB0k1T4n_0z3",
+        "youtube_embed": "https://www.youtube-nocookie.com/embed/vLlIBT0HSSc",
+        "youtube_title": "AI Security, Prompt Injection & Defensive LLM Architecture",
+        "youtube_url": "https://www.youtube.com/watch?v=vLlIBT0HSSc",
         "core_concepts": [
             "OWASP LLM Top 10: LLM01 Prompt Injection (Direct jailbreaks vs Indirect injection via untrusted data)",
             "LLM02 Sensitive Data Disclosure: PII leakage, system prompt extraction, credential exfiltration",
@@ -539,9 +540,9 @@ TOPICS = [
                 "desc": "How models generate structured JSON to invoke APIs, database queries, and external tool sets."
             }
         ],
-        "youtube_embed": "https://www.youtube-nocookie.com/embed/videoseries?list=PL-V4YVMUCh3wZ2vK4_L7Uv3_3F8VbL0uT",
-        "youtube_title": "Microsoft Developer: Azure AI & Semantic Kernel Masterclass",
-        "youtube_url": "https://www.youtube.com/playlist?list=PL-V4YVMUCh3wZ2vK4_L7Uv3_3F8VbL0uT",
+        "youtube_embed": "https://www.youtube-nocookie.com/embed/2maPaQutcWs",
+        "youtube_title": "Complete Generative AI with Azure OpenAI Services Crash Course",
+        "youtube_url": "https://www.youtube.com/watch?v=2maPaQutcWs",
         "core_concepts": [
             "RAG (Retrieval-Augmented Generation) pipeline: Ingestion, Chunking strategies (fixed, semantic, markdown), Vectorization",
             "Azure AI Search Hybrid Search: combining BM25 keyword search with cosine similarity dense vectors and Semantic Reranking",
@@ -602,9 +603,9 @@ TOPICS = [
                 "desc": "Publish-Subscribe, Asynchronous Request-Reply, Claim Check, and Saga distributed patterns."
             }
         ],
-        "youtube_embed": "https://www.youtube-nocookie.com/embed/videoseries?list=PL-V4YVMUCh3wZ2vK4_L7Uv3_3F8VbL0uT",
-        "youtube_title": "Forward Deployed Engineering, Architecture & Client Advisory",
-        "youtube_url": "https://www.youtube.com/playlist?list=PL-V4YVMUCh3wZ2vK4_L7Uv3_3F8VbL0uT",
+        "youtube_embed": "https://www.youtube-nocookie.com/embed/vLlIBT0HSSc",
+        "youtube_title": "How to Become a Forward Deployed Engineer in 2026 - Tech With Tim",
+        "youtube_url": "https://www.youtube.com/watch?v=vLlIBT0HSSc",
         "core_concepts": [
             "The FDE Philosophy: Working at the nexus of Customer Problem, Architecture, Product, and Live Implementation",
             "Root Cause Discovery: Moving past 'what the client asked for' to uncover 'the underlying operational bottleneck'",

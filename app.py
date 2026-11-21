@@ -15,6 +15,7 @@ from data.roadmap import ROADMAP_DAYS, get_day_by_number, get_days_by_phase
 from data.projects import PROJECTS, get_project_by_id
 from data.kql_queries import KQL_QUERIES, MOCK_LOGS, get_kql_by_id
 from data.interview_prep import POSITIONING_STRATEGY, ELEVATOR_PITCH, INTERVIEW_QUESTIONS, get_questions_by_category
+from data.fde_masterclass import FDE_MASTER_COURSE, PROJECT_EXPLORATION_PILLARS
 
 # Base paths configuration for absolute directory resolution (essential for Vercel serverless)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -207,7 +208,48 @@ def index():
         topic_status_map=topic_status_map,
         current_day_data=current_day_data,
         current_topic=current_topic,
-        projects=PROJECTS
+        projects=PROJECTS,
+        fde_course=FDE_MASTER_COURSE,
+        pillars=PROJECT_EXPLORATION_PILLARS
+    )
+
+
+@app.route("/courses")
+def courses_hub():
+    active_day_num = request.args.get("day", default=None, type=int)
+    metrics = calculate_metrics()
+    if active_day_num is None or active_day_num < 1 or active_day_num > 35:
+        active_day_num = metrics["current_day"]
+        
+    active_day = get_day_by_number(active_day_num) or ROADMAP_DAYS[0]
+    active_topic = get_topic_by_id(active_day["topic_id"])
+    
+    try:
+        conn = get_db()
+        cursor = conn.cursor()
+        cursor.execute("SELECT day, completed, notes FROM day_progress")
+        progress_data = {row["day"]: {"completed": row["completed"], "notes": row["notes"]} for row in cursor.fetchall()}
+        conn.close()
+    except Exception:
+        progress_data = {d: {"completed": 0, "notes": ""} for d in range(1, 36)}
+
+    phases_meta = [
+        {"num": 1, "title": "Enterprise Cloud Architecture & Identity", "days": "Days 1–7", "color": "emerald"},
+        {"num": 2, "title": "Posture Management, Workloads & Vulnerabilities", "days": "Days 8–14", "color": "sky"},
+        {"num": 3, "title": "SIEM, SOAR, KQL & Threat Detection", "days": "Days 15–21", "color": "indigo"},
+        {"num": 4, "title": "Incident Response & Enterprise AI Engineering", "days": "Days 22–28", "color": "purple"},
+        {"num": 5, "title": "AI Security, FDE Advisory & Executive Pitch", "days": "Days 29–35", "color": "cyan"}
+    ]
+    
+    return render_template(
+        "courses.html",
+        active_day=active_day,
+        active_topic=active_topic,
+        roadmap_days=ROADMAP_DAYS,
+        progress_data=progress_data,
+        phases_meta=phases_meta,
+        fde_course=FDE_MASTER_COURSE,
+        topics_map={t["id"]: t for t in TOPICS}
     )
 
 
